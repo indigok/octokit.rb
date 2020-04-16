@@ -1,0 +1,32 @@
+name: Octokit CI with 
+
+on:
+   push:
+     branches:
+     - master
+     - *
+   pull_request:
+     branches:
+     - master
+
+jobs:
+  test:
+    - name: Set up Ruby 2.6
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: 2.6.x
+    - name: Set up Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Checkout fixtures-server
+      uses: actions/checkout@v2
+      with: 
+        repository: octokit/fixtures-server
+      run: |
+        cd $GITHUB_WORKSPACE/fixtures-server
+        node dist/wrapper.js &
+    - name: Test server
+      run: |
+        curl -XPOST -H'Content-Type: application/json' http://localhost:3000/fixtures -d '{"scenario": "get-repository"}'
+      
