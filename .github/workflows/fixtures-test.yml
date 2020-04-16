@@ -27,6 +27,10 @@ jobs:
            repository: hmharvey/fixtures-server
            path: fixtures-server
            ref: hmharvey-patch-1
+       - name: Compile fixtures-server
+         run: |
+            cd $GITHUB_WORKSPACE/fixtures-server
+            ncc build index.js -o dist
        - name: Starting fixtures server
          run: |
            cd $GITHUB_WORKSPACE/fixtures-server/dist
