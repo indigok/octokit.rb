@@ -24,12 +24,14 @@ jobs:
        - name: Checkout fixtures-server
          uses: actions/checkout@v2
          with: 
-           repository: octokit/fixtures-server
+           repository: hmharvey/fixtures-server
            path: fixtures-server
+           ref: hmharvey-patch-1
        - name: Starting fixtures server
          run: |
-           cd $GITHUB_WORKSPACE/fixtures-server
-           node dist/wrapper.js &
+           cd $GITHUB_WORKSPACE/fixtures-server/dist
+           npm install
+           node wrapper.js &
        - name: Test server
          run: |
            curl -XPOST -H'Content-Type: application/json' http://localhost:3000/fixtures -d '{"scenario": "get-repository"}'
