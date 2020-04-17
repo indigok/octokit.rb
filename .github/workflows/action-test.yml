@@ -14,7 +14,7 @@ jobs:
          with:
             ruby-version: 2.6.x
        - name: Start fixtures-server
-         uses: hmharvey/octokit-fixtures-server-action@use-docker
+         uses: hmharvey/octokit-fixtures-server-action@hmharvey-patch-1
        - name: Test server
          run: |
            curl -XPOST -H'Content-Type: application/json' http://localhost:3000/fixtures -d '{"scenario": "get-repository"}'
