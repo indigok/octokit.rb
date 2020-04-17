@@ -1,4 +1,4 @@
-name: Octokit CI with 
+name: Octokit CI with
 
 on:
    push:
@@ -23,21 +23,15 @@ jobs:
            node-version: 12.x
        - name: Checkout fixtures-server
          uses: actions/checkout@v2
-         with: 
+         with:
            repository: hmharvey/fixtures-server
            path: fixtures-server
            ref: hmharvey-patch-1
-       - name: Compile fixtures-server
+       - name: Starting fixtures server
          run: |
             cd $GITHUB_WORKSPACE/fixtures-server
             npm ci
-            npm i -g @zeit/ncc
-            ncc build index.js -o dist
-       - name: Starting fixtures server
-         run: |
-           cd $GITHUB_WORKSPACE/fixtures-server/dist
-           npm ci
-           npm start &
+            node bin/server.js &
        - name: Test server
          run: |
            curl -XPOST -H'Content-Type: application/json' http://localhost:3000/fixtures -d '{"scenario": "get-repository"}'
