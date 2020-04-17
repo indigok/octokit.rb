@@ -30,6 +30,7 @@ jobs:
        - name: Compile fixtures-server
          run: |
             cd $GITHUB_WORKSPACE/fixtures-server
+            npm ci
             npm i -g @zeit/ncc
             ncc build index.js -o dist
        - name: Starting fixtures server
