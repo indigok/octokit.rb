@@ -18,7 +18,7 @@ jobs:
          with:
             node-version: 12.x
        - name: Start fixtures-server
-         uses: hmharvey/octokit-fixtures-server-action
+         uses: hmharvey/octokit-fixtures-server-action@master
        - name: Test server
          run: |
            curl -XPOST -H'Content-Type: application/json' http://localhost:3000/fixtures -d '{"scenario": "get-repository"}'
