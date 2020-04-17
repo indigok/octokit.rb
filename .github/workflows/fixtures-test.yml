@@ -36,7 +36,7 @@ jobs:
          run: |
            cd $GITHUB_WORKSPACE/fixtures-server/dist
            npm ci
-           node wrapper.js &
+           npm start
        - name: Test server
          run: |
            curl -XPOST -H'Content-Type: application/json' http://localhost:3000/fixtures -d '{"scenario": "get-repository"}'
