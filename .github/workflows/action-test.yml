@@ -1,4 +1,4 @@
-name: Octokit CI with
+name: Test Fixtures Server
 
 on:
    push:
