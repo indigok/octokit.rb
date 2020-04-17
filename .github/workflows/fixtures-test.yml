@@ -24,9 +24,8 @@ jobs:
        - name: Checkout fixtures-server
          uses: actions/checkout@v2
          with:
-           repository: hmharvey/fixtures-server
+           repository: octokit/fixtures-server
            path: fixtures-server
-           ref: hmharvey-patch-1
        - name: Starting fixtures server
          run: |
             cd $GITHUB_WORKSPACE/fixtures-server
