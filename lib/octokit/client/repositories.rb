@@ -32,7 +32,7 @@ module Octokit
 
       # Edit a repository
       #
-      # @see https://developer.github.com/v3/repos/#edit
+      # @see https://developer.github.com/v3/repos/#update-a-repository
       # @param repo [String, Hash, Repository] A GitHub repository
       # @param options [Hash] Repository information to update
       # @option options [String] :name Name of the repo
@@ -429,7 +429,7 @@ module Octokit
       # @example List topics for octokit/octokit.rb
       #   Octokit.topics('octokit/octokit.rb')
       # @example List topics for octokit/octokit.rb
-      #   client.topics('octokit/octokit.rb')      
+      #   client.topics('octokit/octokit.rb')
       def topics(repo, options = {})
         opts = ensure_api_media_type(:topics, options)
         paginate "#{Repository.path repo}/topics", opts
@@ -586,14 +586,14 @@ module Octokit
       #
       # @param repo [Integer, String, Hash, Repository] A GitHub repository.
       # @param branch [String] Branch name
-      # @option options [Hash] :required_status_checks If not null, the following keys are required:  
-      #   <tt>:enforce_admins [boolean] Enforce required status checks for repository administrators.</tt>  
-      #   <tt>:strict [boolean] Require branches to be up to date before merging.</tt>  
-      #   <tt>:contexts [Array] The list of status checks to require in order to merge into this branch</tt>  
+      # @option options [Hash] :required_status_checks If not null, the following keys are required:
+      #   <tt>:enforce_admins [boolean] Enforce required status checks for repository administrators.</tt>
+      #   <tt>:strict [boolean] Require branches to be up to date before merging.</tt>
+      #   <tt>:contexts [Array] The list of status checks to require in order to merge into this branch</tt>
       #
       # @option options [Hash] :restrictions If not null, the following keys are required:
-      #   <tt>:users [Array] The list of user logins with push access</tt>  
-      #   <tt>:teams [Array] The list of team slugs with push access</tt>.  
+      #   <tt>:users [Array] The list of user logins with push access</tt>
+      #   <tt>:teams [Array] The list of team slugs with push access</tt>.
       #
       #   Teams and users restrictions are only available for organization-owned repositories.
       # @return [Sawyer::Resource] The protected branch
@@ -719,6 +719,19 @@ module Octokit
       #   @client.delete_subscription("octokit/octokit.rb")
       def delete_subscription(repo, options = {})
         boolean_from_response :delete, "#{Repository.path repo}/subscription", options
+      end
+
+      # Create a repository dispatch event
+      #
+      # @param repo [Integer, String, Hash, Repository] A GitHub repository.
+      # @param event_type [String] A custom webhook event name.
+      # @option options [Hash] :client_payload payload with extra information
+      #   about the webhook event that your action or worklow may use.
+      #
+      # @return [Boolean] True if event was dispatched, false otherwise.
+      # @see https://developer.github.com/v3/repos/#create-a-repository-dispatch-event
+      def dispatch_event(repo, event_type, options = {})
+        boolean_from_response :post, "#{Repository.path repo}/dispatches", options.merge({ event_type: event_type })
       end
     end
   end

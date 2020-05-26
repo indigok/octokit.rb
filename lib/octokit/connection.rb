@@ -155,6 +155,9 @@ module Octokit
 
       @last_response = response = agent.call(method, Addressable::URI.parse(path.to_s).normalize.to_s, data, options)
       response.data
+    rescue Octokit::Error => error
+      @last_response = nil
+      raise error
     end
 
     # Executes the request, checking if it was successful
@@ -162,7 +165,7 @@ module Octokit
     # @return [Boolean] True on success, false otherwise
     def boolean_from_response(method, path, options = {})
       request(method, path, options)
-      @last_response.status == 204
+      [201, 202, 204].include? @last_response.status
     rescue Octokit::NotFound
       false
     end
@@ -177,7 +180,7 @@ module Octokit
       conn_opts[:proxy] = @proxy if @proxy
       if conn_opts[:ssl].nil?
         conn_opts[:ssl] = { :verify_mode => @ssl_verify_mode } if @ssl_verify_mode
-      else 
+      else
         if @connection_options[:ssl][:verify] == false
           conn_opts[:ssl] = { :verify_mode => 0}
         else
