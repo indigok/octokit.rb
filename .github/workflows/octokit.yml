@@ -50,6 +50,7 @@ jobs:
             ./vcpkg integrate install
             ./vcpkg install libsodium
           fi
+        shell: bash
       - name: Install dependencies
         run: |
           bundle config set path .bundle/gems
