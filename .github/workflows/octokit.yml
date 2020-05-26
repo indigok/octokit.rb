@@ -35,12 +35,21 @@ jobs:
           key: cache-${{ runner.os }}-${{ matrix.ruby }}-${{ github.sha }}
           restore-keys: |
             cache-${{ runner.os }}-${{ matrix.ruby }}-
-      - name: Set up Ruby
+      - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
       - name: Setup .netrc
         run: chmod 600 spec/fixtures/.netrc
+      - name: Setup libsodium
+        run: |
+          if [ matrix.os == 'windows-latest' ]; then
+            git clone https://github.com/Microsoft/vcpkg.git
+            cd vcpkg
+            ./bootstrap-vcpkg.bat
+            ./vcpkg integrate install
+            ./vcpkg install libsodium
+          fi
       - name: Install dependencies
         run: |
           bundle config set path .bundle/gems
