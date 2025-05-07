@@ -1,8 +1,8 @@
-module Octokit
+# frozen_string_literal: true
 
+module Octokit
   # Class to parse and create Gist URLs
   class Gist
-
     # !@attribute id
     #   @return [String] Gist ID
     attr_accessor :id
@@ -10,7 +10,7 @@ module Octokit
     # Instantiate {Gist} object from Gist URL
     # @ return [Gist]
     def self.from_url(url)
-      Gist.new(URI.parse(url).path[1..-1])
+      Gist.new(URI.parse(url).path[1..])
     end
 
     def initialize(gist)
@@ -31,6 +31,5 @@ module Octokit
     def url
       "https://gist.github.com/#{@id}"
     end
-
   end
 end

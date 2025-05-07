@@ -1,5 +1,6 @@
-module Octokit
+# frozen_string_literal: true
 
+module Octokit
   # Configuration options for {Client}, defaulting to values
   # in {Default}
   module Configurable
@@ -31,6 +32,12 @@ module Octokit
     #   @return [String] An admin password set up for your GitHub Enterprise management console
     # @!attribute management_console_endpoint
     #   @return [String] Base URL for API requests to the GitHub Enterprise management console
+    # @!attribute manage_ghes_endpoint
+    #   @return [String] Base URL for API requests to the GitHub Enterprise Server Manage API
+    # @!attribute manage_ghes_username
+    #   @return [String] API username for requests to the GitHub Enterprise Server Manage API
+    # @!attribute manage_ghes_password
+    #   @return [String] API user password for requests to the GitHub Enterprise Server Manage API
     # @!attribute middleware
     #   @see https://github.com/lostisland/faraday
     #   @return [Faraday::Builder or Faraday::RackBuilder] Configure middleware for Faraday
@@ -58,34 +65,39 @@ module Octokit
                   :middleware, :netrc, :netrc_file,
                   :per_page, :proxy, :ssl_verify_mode, :user_agent
     attr_writer :password, :web_endpoint, :api_endpoint, :login,
-                :management_console_endpoint, :management_console_password
+                :management_console_endpoint, :management_console_password,
+                :manage_ghes_endpoint,
+                :manage_ghes_username,
+                :manage_ghes_password
 
     class << self
-
       # List of configurable keys for {Octokit::Client}
       # @return [Array] of option keys
       def keys
-        @keys ||= [
-          :access_token,
-          :api_endpoint,
-          :auto_paginate,
-          :bearer_token,
-          :client_id,
-          :client_secret,
-          :connection_options,
-          :default_media_type,
-          :login,
-          :management_console_endpoint,
-          :management_console_password,
-          :middleware,
-          :netrc,
-          :netrc_file,
-          :per_page,
-          :password,
-          :proxy,
-          :ssl_verify_mode,
-          :user_agent,
-          :web_endpoint
+        @keys ||= %i[
+          access_token
+          api_endpoint
+          auto_paginate
+          bearer_token
+          client_id
+          client_secret
+          connection_options
+          default_media_type
+          login
+          management_console_endpoint
+          management_console_password
+          manage_ghes_endpoint
+          manage_ghes_username
+          manage_ghes_password
+          middleware
+          netrc
+          netrc_file
+          per_page
+          password
+          proxy
+          ssl_verify_mode
+          user_agent
+          web_endpoint
         ]
       end
     end
@@ -97,7 +109,13 @@ module Octokit
 
     # Reset configuration options to default values
     def reset!
+      # rubocop:disable Style/HashEachMethods
+      #
+      # This may look like a `.keys.each` which should be replaced with `#each_key`, but
+      # this doesn't actually work, since `#keys` is just a method we've defined ourselves.
+      # The class doesn't fulfill the whole `Enumerable` contract.
       Octokit::Configurable.keys.each do |key|
+        # rubocop:enable Style/HashEachMethods
         instance_variable_set(:"@#{key}", Octokit::Default.options[key])
       end
       self
@@ -113,24 +131,26 @@ module Octokit
     end
 
     def api_endpoint
-      File.join(@api_endpoint, "")
+      File.join(@api_endpoint, '')
     end
 
     def management_console_endpoint
-      File.join(@management_console_endpoint, "")
+      File.join(@management_console_endpoint, '')
+    end
+
+    def manage_ghes_endpoint
+      File.join(@manage_ghes_endpoint, '')
     end
 
     # Base URL for generated web URLs
     #
     # @return [String] Default: https://github.com/
     def web_endpoint
-      File.join(@web_endpoint, "")
+      File.join(@web_endpoint, '')
     end
 
     def login
-      @login ||= begin
-        user.login if token_authenticated?
-      end
+      @login ||= (user.login if token_authenticated?)
     end
 
     def netrc?
@@ -140,7 +160,7 @@ module Octokit
     private
 
     def options
-      Hash[Octokit::Configurable.keys.map{|key| [key, instance_variable_get(:"@#{key}")]}]
+      Octokit::Configurable.keys.to_h { |key| [key, instance_variable_get(:"@#{key}")] }
     end
 
     def fetch_client_id_and_secret(overrides = {})

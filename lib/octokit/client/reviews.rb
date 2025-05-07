@@ -1,11 +1,11 @@
+# frozen_string_literal: true
+
 module Octokit
   class Client
-
     # Methods for the Reviews API
     #
     # @see https://developer.github.com/v3/pulls/reviews/
     module Reviews
-
       # List reviews on a pull request
       #
       # @param repo [Integer, String, Hash, Repository] A GitHub repository
@@ -151,7 +151,7 @@ module Octokit
       # @param number [Integer] Number ID of the pull request
       # @param reviewers [Hash] :reviewers [Array<String>] An array of user logins
       # @param options [Hash] :team_reviewers [Array<String>] An array of team slugs
-      # @see https://developer.github.com/v3/pulls/review_requests/#create-a-review-request
+      # @see https://developer.github.com/v3/pulls/review_requests/#request-reviewers-for-a-pull-request
       #
       # @example
       #   @client.request_pull_request_review('octokit/octokit.rb', 2, reviewers: ['soudy'])
@@ -161,9 +161,9 @@ module Octokit
         # TODO(5.0): remove deprecated behavior
         if reviewers.is_a?(Array)
           octokit_warn(
-            "Deprecated: Octokit::Client#request_pull_request_review "\
+            'Deprecated: Octokit::Client#request_pull_request_review ' \
             "no longer takes a separate :reviewers argument.\n" \
-            "Please update your call to pass :reviewers and :team_reviewers as part of the options hash."
+            'Please update your call to pass :reviewers and :team_reviewers as part of the options hash.'
           )
           options = options.merge(reviewers: reviewers)
         else
@@ -190,19 +190,37 @@ module Octokit
       #   @client.delete_pull_request_review_request('octokit/octokit.rb', 2, options)
       #
       # @return [Sawyer::Resource>] Hash representing the pull request
-      def delete_pull_request_review_request(repo, id, reviewers={}, options = {})
+      def delete_pull_request_review_request(repo, id, reviewers = {}, options = {})
         # TODO(5.0): remove deprecated behavior
         if !reviewers.empty? && !options.empty?
           octokit_warn(
-            "Deprecated: Octokit::Client#delete_pull_request_review_request "\
+            'Deprecated: Octokit::Client#delete_pull_request_review_request ' \
             "no longer takes a separate :reviewers argument.\n" \
-            "Please update your call to pass :reviewers and :team_reviewers as part of the options hash."
+            'Please update your call to pass :reviewers and :team_reviewers as part of the options hash.'
           )
         end
         # For backwards compatibility, this endpoint can be called with a separate reviewers hash.
         # If not called with a separate hash, then 'reviewers' is, in fact, 'options'.
         options = options.merge(reviewers)
         delete "#{Repository.path repo}/pulls/#{id}/requested_reviewers", options
+      end
+
+      # Update a review request comment
+      #
+      # @param repo [Integer, String, Hash, Repository] A GitHub repository
+      # @param number [Integer] Number ID of the pull request
+      # @param review [Integer] The id of the review
+      # @param body [String] body text of the pull request review.
+      # @param options [Hash] Method options
+      # @see https://developer.github.com/v3/pulls/reviews/#update-a-pull-request-review
+      #
+      # @example
+      #   @client.update_pull_request_review('octokit/octokit.rb', 825, 6505518, 'This is close to perfect! Please address the suggested inline change. And add more about this.')
+      #
+      # @return [Sawyer::Resource] Hash representing the review comment
+      def update_pull_request_review(repo, number, review, body, options = {})
+        options[:body] = body
+        put "#{Repository.path repo}/pulls/#{number}/reviews/#{review}", options
       end
     end
   end
