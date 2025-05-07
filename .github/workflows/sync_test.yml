@@ -20,9 +20,9 @@ jobs:
 
       - name: Create and Push Branch 
         run: |
-          git checkout -B weekly-sync-branch origin/weekly-sync-branch
+          git checkout -b weekly-sync-branch
           git merge upstream/weekly-sync-branch
-          git push origin weekly-sync-branch
+          git push --set-upstream origin weekly-sync-branch
 
       - name: Create Pull Request
         run: gh pr create -B main -H weekly-sync-branch --title 'Sync Fork with Upstream' --body 'Weekly Cron. Created by GitHub Actions.'
