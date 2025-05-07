@@ -21,7 +21,7 @@ jobs:
       - name: Create and Push Branch 
         run: |
           git checkout -b weekly-sync-branch
-          git merge upstream/weekly-sync-branch
+          git merge upstream/main
           git push --set-upstream origin weekly-sync-branch
 
       - name: Create Pull Request
