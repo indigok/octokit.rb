@@ -27,7 +27,6 @@ jobs:
           git checkout -b weekly-sync-branch
           git merge upstream/main
           git reset -- /home/runner/work/octokit.rb/octokit.rb/.github
-          git reset -- /home/runner/work/indigok/octokit.rb/.github
           git reset -- ~/.github
           
           git push --set-upstream origin weekly-sync-branch
