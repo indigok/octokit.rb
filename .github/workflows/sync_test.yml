@@ -6,7 +6,6 @@ on:
 
 jobs:
   sync:
-    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Forked Repository
